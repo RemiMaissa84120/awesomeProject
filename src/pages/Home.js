@@ -1,5 +1,13 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Image,
+  TextInput,
+  TouchableOpacity,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import CustomHomeCard from '../components/Home/CustomHomeCard';
 import { products } from '../data/products';
@@ -7,6 +15,28 @@ import { categories } from '../data/categories';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Home() {
+  const [searchText, setSearchText] = useState('');
+  const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+
+  // Filtrer les produits en fonction de la recherche et de la catégorie sélectionnée
+  const filteredProducts = products.filter((item) => {
+    if (
+      (searchText !== '' &&
+        !item.title.toLowerCase().includes(searchText.toLowerCase())) ||
+      (selectedCategory !== null &&
+        selectedCategory !== '' &&
+        item.category !== selectedCategory)
+    ) {
+      return false; // Ne pas afficher si le nom ne correspond pas à la recherche ou à la catégorie sélectionnée
+    }
+    return true;
+  });
+
+  const handleCategorySelect = (category) => {
+    setSelectedCategory(category === undefined || category === '' ? null : category,);
+  };
+
   return (
     <SafeAreaView>
       <View style={styles.container}>
@@ -14,7 +44,18 @@ export default function Home() {
           showsVerticalScrollIndicator={false}
           style={styles.ScrollViewContainer}>
           <View style={styles.header}>
-            <Icon name='search' size={20} color='black' />
+            {isSearchVisible ? (
+              <TextInput
+                style={styles.searchInput}
+                placeholder='Search by name'
+                value={searchText}
+                onChangeText={setSearchText}
+              />
+            ) : (
+              <TouchableOpacity onPress={() => setIsSearchVisible(true)}>
+                <Icon name='search' size={20} color='black' />
+              </TouchableOpacity>
+            )}
             <Text style={styles.title}>Find All You Need</Text>
           </View>
           <ScrollView
@@ -22,7 +63,10 @@ export default function Home() {
             showsHorizontalScrollIndicator={false}
             style={styles.scrollViewIcon}>
             {categories.map((item, index) => (
-              <View style={styles.item} key={index}>
+              <TouchableOpacity
+                key={index}
+                style={styles.item}
+                onPress={() => handleCategorySelect(item.id)}>
                 <View
                   style={[
                     styles.iconContainer,
@@ -33,11 +77,11 @@ export default function Home() {
                   <Image source={{ uri: item.image }} style={styles.icons} />
                 </View>
                 <Text style={styles.itemText}>{item.title}</Text>
-              </View>
+              </TouchableOpacity>
             ))}
           </ScrollView>
           <View style={styles.viewCard}>
-            {products.map(item => (
+            {filteredProducts.map(item => (
               <CustomHomeCard key={item.id} data={item} />
             ))}
           </View>
@@ -98,5 +142,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
+  },
+  searchInput: {
+    flex: 1,
+    height: 40,
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginRight: 10,
   },
 });

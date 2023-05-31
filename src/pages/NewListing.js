@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
   View,
   Text,
@@ -23,8 +23,12 @@ const NewListing = ({ navigation }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
-  const [category, setCategory] = useState('');
+  const [category, setCategory] = useState();
   const [isModalVisible, setIsModalVisible] = useState(false);
+
+  useEffect(() => {
+    console.log('listing:', listing);
+  }, [listing]);
 
   const handleSaveListing = () => {
     // Vérifier si tous les champs sont remplis
@@ -32,6 +36,7 @@ const NewListing = ({ navigation }) => {
       Alert.alert('Warning', 'Please fill in all fields before submitting.');
       return;
     }
+    const selectedCategory = categories.find(categoryFind => categoryFind.title === category,);
 
     const listingItem = {
       id: new Date().getTime()
@@ -39,13 +44,12 @@ const NewListing = ({ navigation }) => {
       title,
       description,
       price,
-      category,
+      category: selectedCategory.id,
       image:
         'https://cdn.shopify.com/s/files/1/0079/2539/9616/products/myakka-chairs-jalkamal-block-print-footstool-28730051264703_2000x.jpg?v=1629217511',
     };
 
     setListing([...listing, listingItem]);
-    console.log('listing:', listing);
 
     navigation.navigate('MyListing');
   };

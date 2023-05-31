@@ -3,10 +3,12 @@ import { View, Text, StyleSheet } from 'react-native';
 import { ProfileCard } from '../components/Profile/ProfileCard';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { AuthContext } from '../context/AuthContext';
+import { ListingContext } from '../context/ListingContext';
 import CustomButton from '../components/custom/CustomButton';
 
 const Profile = ({ navigation }) => {
   const { user } = useContext(AuthContext);
+  const { listing } = useContext(ListingContext);
 
   return (
     <View style={styles.container}>
@@ -22,7 +24,7 @@ const Profile = ({ navigation }) => {
       </View>
       <ProfileCard
         title={'My Listings'}
-        subtitle={'Already have 10 listing'}
+        subtitle={`Already have ${listing.length} listing`}
         onPress={() => {
           navigation.navigate('MyListing');
         }}
