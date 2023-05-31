@@ -11,7 +11,7 @@ import Product from './src/pages/Product';
 import Profile from './src/pages/Profile';
 import Favorite from './src/pages/Favorite';
 import Settings from './src/pages/Settings';
-import NewListing from './src/components/Profile/Listing/NewListing';
+import NewListing from './src/pages/NewListing';
 import MyListing from './src/pages/MyListing';
 
 const Stack = createNativeStackNavigator();

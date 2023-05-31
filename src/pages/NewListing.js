@@ -9,13 +9,13 @@ import {
   Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { ListingContext } from '../../../context/ListingContext';
+import { ListingContext } from '../context/ListingContext';
 
-import CustomInput from '../../custom/CustomInput';
-import CustomSelect from '../../custom/CustomSelect';
+import CustomInput from '../components/custom/CustomInput';
+import CustomSelect from '../components/custom/CustomSelect';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { categories } from '../../../data/categories';
-import CustomImageSelected from '../../custom/CustomImageSelected';
+import { categories } from '../data/categories';
+import CustomImageSelected from '../components/custom/CustomImageSelected';
 
 const NewListing = ({ navigation }) => {
   const { listing, setListing } = useContext(ListingContext);
