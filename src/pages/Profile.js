@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { ProfileCard } from '../components/Profile/ProfileCard';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { AuthContext } from '../context/AuthContext';
@@ -7,14 +7,20 @@ import { ListingContext } from '../context/ListingContext';
 import CustomButton from '../components/custom/CustomButton';
 
 const Profile = ({ navigation }) => {
-  const { user } = useContext(AuthContext);
+  const { user, setUser } = useContext(AuthContext);
   const { listing } = useContext(ListingContext);
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Profile</Text>
-        <Icon name='sign-out' size={20} color='black' />
+        <TouchableOpacity
+          style={styles.backIconContainer}
+          onPress={() => {
+            setUser();
+          }}>
+          <Icon name='sign-out' size={20} color='black' />
+        </TouchableOpacity>
       </View>
       <View style={styles.content}>
         <Text style={styles.text1}>

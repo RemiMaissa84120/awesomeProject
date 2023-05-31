@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -14,7 +14,7 @@ import NewListing from './src/pages/NewListing';
 import MyListing from './src/pages/MyListing';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
-
+import { AuthContext } from './src/context/AuthContext';
 
 const ProfileStack = () => {
   return (
@@ -71,6 +71,8 @@ function BottomTabs() {
   );
 }
 const Routes = () => {
+  const { user } = useContext(AuthContext);
+
   return (
     <Stack.Navigator>
       <Stack.Screen
