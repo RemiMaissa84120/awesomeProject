@@ -2,7 +2,6 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
 import SignUp from './src/pages/SignUp';
 import SignIn from './src/pages/SignIn';
 import SplashScreen from './src/pages/SplashScreen';
@@ -13,16 +12,34 @@ import Favorite from './src/pages/Favorite';
 import Settings from './src/pages/Settings';
 import NewListing from './src/pages/NewListing';
 import MyListing from './src/pages/MyListing';
-
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
+
+const ProfileStack = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name='Profile'
+        component={Profile}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name='MyListing'
+        options={{ headerShown: false }}
+        component={MyListing}
+      />
+      <Stack.Screen
+        name='Settings'
+        options={{ headerShown: false }}
+        component={Settings}
+      />
+    </Stack.Navigator>
+  );
+};
 function BottomTabs() {
   return (
-    <Tab.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}>
+    <Tab.Navigator screenOptions={{ headerShown: false }}>
       <Tab.Screen
         name='Home'
         component={Home}
@@ -42,8 +59,8 @@ function BottomTabs() {
         }}
       />
       <Tab.Screen
-        name='Profile'
-        component={Profile}
+        name='ProfileStack'
+        component={ProfileStack}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Icon name='user' size={size} color={color} />
@@ -53,7 +70,6 @@ function BottomTabs() {
     </Tab.Navigator>
   );
 }
-
 const Routes = () => {
   return (
     <Stack.Navigator>
@@ -83,22 +99,11 @@ const Routes = () => {
         component={BottomTabs}
       />
       <Stack.Screen
-        name='Settings'
-        options={{ headerShown: false }}
-        component={Settings}
-      />
-      <Stack.Screen
         name='NewListing'
         options={{ headerShown: false }}
         component={NewListing}
       />
-      <Stack.Screen
-        name='MyListing'
-        options={{ headerShown: false }}
-        component={MyListing}
-      />
     </Stack.Navigator>
   );
 };
-
 export default Routes;
