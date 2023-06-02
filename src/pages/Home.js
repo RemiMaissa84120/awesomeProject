@@ -1,34 +1,58 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
-  Image,
   TextInput,
   TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import CustomHomeCard from '../components/Home/CustomHomeCard';
-import { products } from '../data/products';
-import { categories } from '../data/categories';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Home() {
   const [searchText, setSearchText] = useState('');
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
 
-  // Filtrer les produits en fonction de la recherche et de la catégorie sélectionnée
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('https://dummyjson.com/products/categories',);
+        const data = await response.json();
+        setCategories(['Popular', ...data]);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('https://dummyjson.com/products');
+        const data = await response.json();
+        setProducts(data.products);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    };
+
+    fetchCategories();
+    fetchProducts();
+  }, []);
+
   const filteredProducts = products.filter((item) => {
     if (
       (searchText !== '' &&
         !item.title.toLowerCase().includes(searchText.toLowerCase())) ||
       (selectedCategory !== null &&
         selectedCategory !== '' &&
+        selectedCategory !== 'Popular' &&
         item.category !== selectedCategory)
     ) {
-      return false; // Ne pas afficher si le nom ne correspond pas à la recherche ou à la catégorie sélectionnée
+      return false;
     }
     return true;
   });
@@ -66,17 +90,8 @@ export default function Home() {
               <TouchableOpacity
                 key={index}
                 style={styles.item}
-                onPress={() => handleCategorySelect(item.id)}>
-                <View
-                  style={[
-                    styles.iconContainer,
-                    index === 0
-                      ? styles.iconContainerBlack
-                      : styles.iconContainerGray,
-                  ]}>
-                  <Image source={{ uri: item.image }} style={styles.icons} />
-                </View>
-                <Text style={styles.itemText}>{item.title}</Text>
+                onPress={() => handleCategorySelect(item)}>
+                <Text style={styles.itemText}>{item}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -113,26 +128,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: 16,
   },
-  iconContainer: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 10,
-  },
-  iconContainerBlack: {
-    backgroundColor: 'black',
-  },
-  iconContainerGray: {
-    backgroundColor: '#E8E8E8',
-  },
   itemText: {
     marginTop: 8,
     textAlign: 'center',
-  },
-  icons: {
-    width: 40,
-    height: 40,
   },
   scrollViewIcon: {
     marginBottom: 20,

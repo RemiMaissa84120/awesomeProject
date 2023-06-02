@@ -9,7 +9,7 @@ const Product = ({ navigation }) => {
   const route = useRoute();
   const { data } = route.params;
 
-  const { image, title, price, description } = data;
+  const { images, title, price, description } = data;
 
   const { favorite, setFavorite } = useContext(FavoriteContext);
 
@@ -32,7 +32,13 @@ const Product = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
-        <Image source={{ uri: image }} style={styles.image} />
+        {images.length > 1 ? (
+          <Image source={{ uri: images[0] }} style={styles.image} />
+        ) : (
+          <View style={styles.imageContainer}>
+            <Image source={{ uri: images[0] }} style={styles.image} />
+          </View>
+        )}
 
         <TouchableOpacity
           style={styles.backIconContainer}

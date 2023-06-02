@@ -3,7 +3,7 @@ import { View, Image, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const CustomHomeCard = ({ data }) => {
-  const { image, title, price } = data;
+  const { images, title, price } = data;
   const navigation = useNavigation();
 
   const navigateToProduct = () => {
@@ -12,10 +12,16 @@ const CustomHomeCard = ({ data }) => {
 
   return (
     <TouchableOpacity style={styles.container} onPress={navigateToProduct}>
-      <Image source={{ uri: image }} style={styles.image} />
+      {images.length > 1 ? (
+        <Image source={{ uri: images[0] }} style={styles.image} />
+      ) : (
+        <View style={styles.imageContainer}>
+          <Image source={{ uri: images[0] }} style={styles.image} />
+        </View>
+      )}
       <View style={styles.textContainer}>
         <Text style={styles.text}>{title}</Text>
-        <Text style={styles.price}>{price}</Text>
+        <Text style={styles.price}>$ {price}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -28,6 +34,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: 'hidden',
     marginBottom: 20,
+  },
+  imageContainer: {
+    width: '100%',
+    aspectRatio: 1,
+    backgroundColor: 'gray',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   image: {
     width: '100%',
