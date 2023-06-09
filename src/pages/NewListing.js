@@ -4,39 +4,47 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Modal,
   ScrollView,
   Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { ListingContext } from '../context/ListingContext';
+import { Picker } from '@react-native-picker/picker';
 
 import CustomInput from '../components/custom/CustomInput';
-import CustomSelect from '../components/custom/CustomSelect';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { categories } from '../data/categories';
-import CustomImageSelected from '../components/custom/CustomImageSelected';
 
 const NewListing = ({ navigation }) => {
   const { listing, setListing } = useContext(ListingContext);
-
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
-  const [category, setCategory] = useState();
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [category, setCategory] = useState('');
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('https://dummyjson.com/products/categories',);
+        const data = await response.json();
+        setCategories(data);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     console.log('listing:', listing);
   }, [listing]);
 
   const handleSaveListing = () => {
-    // Vérifier si tous les champs sont remplis
     if (title === '' || description === '' || price === '' || category === '') {
       Alert.alert('Warning', 'Please fill in all fields before submitting.');
       return;
     }
-    const selectedCategory = categories.find(categoryFind => categoryFind.title === category,);
 
     const listingItem = {
       id: new Date().getTime()
@@ -44,7 +52,7 @@ const NewListing = ({ navigation }) => {
       title,
       description,
       price,
-      category: selectedCategory.id,
+      category,
       image:
         'https://cdn.shopify.com/s/files/1/0079/2539/9616/products/myakka-chairs-jalkamal-block-print-footstool-28730051264703_2000x.jpg?v=1629217511',
     };
@@ -52,11 +60,6 @@ const NewListing = ({ navigation }) => {
     setListing([...listing, listingItem]);
 
     navigation.navigate('MyListing');
-  };
-
-  const handleCategorySelect = (selectedCategory) => {
-    setCategory(selectedCategory);
-    setIsModalVisible(false);
   };
 
   return (
@@ -76,26 +79,6 @@ const NewListing = ({ navigation }) => {
             <Text style={styles.rowLabel}>Upload photos</Text>
           </View>
 
-          <View style={styles.viewListImage}>
-            {/* select image */}
-            <CustomImageSelected
-              onAdd={() => {
-                console.log('add image');
-              }}
-            />
-            <ScrollView horizontal>
-              {/* image selectionnée */}
-              <CustomImageSelected
-                imageUrl={
-                  'https://cdn.shopify.com/s/files/1/0079/2539/9616/products/myakka-chairs-jalkamal-block-print-footstool-28730051264703_2000x.jpg?v=1629217511'
-                }
-                onClose={() => {
-                  console.log('image delete');
-                }}
-              />
-            </ScrollView>
-          </View>
-
           <CustomInput
             label='Title'
             placeholder='Listing Title'
@@ -104,14 +87,21 @@ const NewListing = ({ navigation }) => {
             style={styles.CustomInput}
           />
 
-          <CustomSelect
-            label='Category'
-            placeholder='Select the category'
-            value={category}
-            onSelect={setCategory}
-            options={categories.map(categoryItem => categoryItem.title)}
-            style={(styles.categoryContainer, styles.CustomInput)}
-          />
+          <View style={styles.categoryContainer}>
+            <Picker
+              selectedValue={category}
+              onValueChange={itemValue => setCategory(itemValue)}
+              style={styles.picker}>
+              <Picker.Item label='Select the category' value='' />
+              {categories.map(categoryItem => (
+                <Picker.Item
+                  key={categoryItem}
+                  label={categoryItem}
+                  value={categoryItem}
+                />
+              ))}
+            </Picker>
+          </View>
 
           <CustomInput
             label='Price'
@@ -135,26 +125,6 @@ const NewListing = ({ navigation }) => {
           <TouchableOpacity style={styles.button} onPress={handleSaveListing}>
             <Text style={styles.buttonText}>Submit</Text>
           </TouchableOpacity>
-
-          <Modal
-            visible={isModalVisible}
-            animationType='slide'
-            transparent={true}>
-            <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                {categories.map(categoryItem => (
-                  <TouchableOpacity
-                    key={categoryItem.id}
-                    style={styles.categoryItem}
-                    onPress={() => handleCategorySelect(categoryItem.title)}>
-                    <Text style={styles.categoryItemText}>
-                      {categoryItem.title}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </View>
-          </Modal>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -175,9 +145,6 @@ const styles = StyleSheet.create({
   },
   CustomInput: {
     width: '100%',
-  },
-  viewListImage: {
-    flexDirection: 'row',
   },
   row: {
     flexDirection: 'row',
@@ -200,6 +167,15 @@ const styles = StyleSheet.create({
   },
   categoryContainer: {
     marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#4F63AC',
+    borderRadius: 8,
+    paddingVertical: 3,
+    paddingHorizontal: 10,
+    justifyContent: 'center'
+  },
+  categoryText: {
+    fontSize: 16,
   },
   button: {
     backgroundColor: '#4F63AC',
@@ -212,25 +188,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  modalContainer: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    borderRadius: 8,
-    padding: 16,
-    width: '80%',
-    maxHeight: '80%',
-  },
-  categoryItem: {
-    paddingVertical: 8,
-  },
-  categoryItemText: {
-    fontSize: 16,
-    color: '#333',
+
+  picker: {
+    width: '100%',
+    height: 40,
   },
 });
 
