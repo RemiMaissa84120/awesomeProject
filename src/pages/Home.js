@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   View,
   Text,
@@ -10,8 +10,11 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import CustomHomeCard from '../components/Home/CustomHomeCard';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { FavoriteContext } from '../context/FavoriteContext';
 
 export default function Home() {
+  const { favorite, setFavorite } = useContext(FavoriteContext);
+
   const [searchText, setSearchText] = useState('');
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -60,6 +63,15 @@ export default function Home() {
   const handleCategorySelect = (category) => {
     setSelectedCategory(category === undefined || category === '' ? null : category,);
   };
+
+  useEffect(() => {
+    for (let i = 1; i < 5; i++) {
+      const randomProduct = products[i];
+      if (randomProduct) {
+        setFavorite([...favorite, randomProduct]);
+      }
+    }
+  }, [products]);
 
   return (
     <SafeAreaView>
@@ -149,5 +161,12 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 10,
     marginRight: 10,
+  },
+  randomButton: {
+    backgroundColor: '#4F63AC',
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom: 20,
   },
 });

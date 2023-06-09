@@ -32,11 +32,11 @@ const Product = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
-        {images.length > 1 ? (
+        {images.length > 0 ? (
           <Image source={{ uri: images[0] }} style={styles.image} />
         ) : (
           <View style={styles.imageContainer}>
-            <Image source={{ uri: images[0] }} style={styles.image} />
+            <Text>No Image</Text>
           </View>
         )}
 

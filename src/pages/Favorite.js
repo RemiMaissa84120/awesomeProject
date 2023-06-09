@@ -11,6 +11,7 @@ const Favorite = () => {
     setFavorite(updatedFavorite);
   };
 
+  console.log('favorite', favorite);
   return (
     <ScrollView style={styles.container}>
       {favorite.map(item => (
