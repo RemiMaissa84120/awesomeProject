@@ -3,12 +3,12 @@ import { View, Image, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const CustomFavoriteCard = ({ data, onDelete }) => {
-  const { title, image, price } = data;
+  const { title, images, price } = data;
 
   return (
     <View style={styles.container}>
       <View style={styles.contentContainer}>
-        <Image source={{ uri: image }} style={styles.image} />
+        <Image source={{ uri: images[0] }} style={styles.image} />
         <View style={styles.textContainer}>
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.price}>{price}</Text>
